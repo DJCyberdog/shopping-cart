@@ -1,0 +1,75 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Recipes {
+  cookingTime            Int?
+  createdAt              DateTime               @default(now())
+  id                     String                 @id @default(cuid())
+  isFavorite             Boolean?
+  name                   String?
+  recipeIngredientsItems RecipeIngredients[]
+  recipeType             EnumRecipesRecipeType?
+  servings               Int?
+  updatedAt              DateTime               @updatedAt
+}
+
+model Ingredients {
+  createdAt              DateTime            @default(now())
+  expirationDate         DateTime?
+  id                     String              @id @default(cuid())
+  name                   String?
+  price                  Float?
+  quantity               Int?
+  recipeIngredientsItems RecipeIngredients[]
+  updatedAt              DateTime            @updatedAt
+}
+
+model FridgeItems {
+  createdAt      DateTime @default(now())
+  expirationDate Int?
+  id             String   @id @default(cuid())
+  name           String?
+  quantity       Int?
+  updatedAt      DateTime @updatedAt
+}
+
+model ShoppingCart {
+  createdAt   DateTime  @default(now())
+  createdTime DateTime?
+  id          String    @id @default(cuid())
+  ingredients Json?
+  updatedAt   DateTime  @updatedAt
+}
+
+model RecipeIngredients {
+  createdAt    DateTime     @default(now())
+  id           String       @id @default(cuid())
+  ingredient   Ingredients? @relation(fields: [ingredientId], references: [id])
+  ingredientId String?
+  quantity     Int?
+  recipe       Recipes?     @relation(fields: [recipeId], references: [id])
+  recipeId     String?
+  updatedAt    DateTime     @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumRecipesRecipeType {
+  Option1
+}
